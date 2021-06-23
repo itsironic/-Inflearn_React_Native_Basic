@@ -7,61 +7,81 @@
  */
 
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import { TextInput, Button, View, Text, StyleSheet, ScrollView, ActivityIndicator, Image } from 'react-native';
 import Header from './src/header';
 import Generator from './src/generator';
 import NumList from './src/numlist';
 import Input from './src/input';
+import Picker from './src/picker';
+import Slider from './src/slider';
+import Yogurt from './assets/img/yogurt.png';
+import Modal from './src/modal';
 
 class App extends Component {
 
   state = {
-    appName: 'My First App',
-    random: [36, 999]
+    myTextInput: '',
+    alphabet: ['a', 'b', 'c', 'd']
   }
 
-  onAddRandomNum = () => {
-    const randomNum = Math.floor(Math.random()*100)+1;//Math Method:floor(소수점이하 제거),random(0-1 사이 랜덤숫자 추출)
-    this.setState(prevState => {
+  onChangeInput = (event) => {
+    this.setState({
+      myTextInput: event
+    })
+  }
+
+  onAddTextInput = () => {
+    this.setState(prevState=>{
       return {
-        random: [...prevState.random, randomNum]//Spread Operator (ES6) 활용
+        myTextInput: '',
+        alphabet: [...prevState.alphabet, prevState.myTextInput]
       }
     })
   }
 
-  onNumDelete = (position) => {
-    const newArray = this.state.random.filter((num, index)=>{
-      return position != index;
-    })
-    this.setState({
-      random:newArray
-    })
-  }
-  
   render() {
     return (
       <View style={styles.mainView}>
-        {/* <Header name={this.state.appName}/>
-        <View style={styles.subView}>
-          <Text 
-            style={styles.mainText}
-            onPress={()=>alert('text touch event')}  
-          >Hello World</Text>
-        </View>
-        <Generator add={this.onAddRandomNum}/>
-        <ScrollView
-          style={{width: '100%'}}
-          //onMomentumScrollBegin={()=>alert('begin')}
-          //onMomentumScrollEnd={()=>alert('end')}
-          //onScroll={()=>alert('Scroll')}
-          bounces={false}
-        >
-          <NumList 
-            num={this.state.random}
-            delete={this.onNumDelete}  
-          />
-        </ScrollView> */}
-        <Input/>
+        <Picker/>
+        <Slider/>
+        <ActivityIndicator
+          style={{paddingBottom: 0}}
+          size="large"
+          color="green"
+          animating={true}
+        />
+        <Image
+          style={styles.image}
+          source={Yogurt}//로컬소스와 서버소스를 같이 출력하려면?
+          source={{uri: 'https://blisgo.com/wp-content/uploads/elementor/thumbs/%EC%9A%94%EA%B1%B0%ED%8A%B8-%EB%9A%9C%EA%BB%91-p5libu7gy7hzxnfempituick05cnnw6542pw4bhgcg.jpg'}}
+          resizeMode="contain"
+          onLoadEnd={()=>alert('Loaded!')}
+        />
+        <Modal/>
+        <TextInput
+          value={this.state.myTextInput}
+          style={styles.input}
+          onChangeText={this.onChangeInput}
+          multiline={true}
+          maxLength={100}
+          autoCapitalize={'none'}
+          editable={true}
+        />
+        <Button
+          title="Add Text Input"
+          onPress={this.onAddTextInput}
+        />
+        <ScrollView style={{width: '100%'}}>
+          {this.state.alphabet.map((item, idx) => (
+            <Text
+              style={styles.mainText}
+              key={idx}
+            >
+              {item}
+            </Text>
+          ))}
+        </ScrollView>
+        
       </View>
     )
   }
@@ -91,7 +111,19 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'normal',
     color: 'red',
-    padding: 20
+    padding: 20,
+    margin: 20,
+    backgroundColor: 'pink'
+  },
+  input: {
+    width: '100%',
+    backgroundColor: '#cecece',
+    marginTop: 20,
+    fontSize: 25
+  },
+  image: {
+    width: '30%',
+    height: 200
   }
 })
 
